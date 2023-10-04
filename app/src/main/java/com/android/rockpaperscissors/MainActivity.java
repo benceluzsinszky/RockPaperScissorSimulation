@@ -1,4 +1,4 @@
-package com.example.rockpaperscissors;
+package com.android.rockpaperscissors;
 
 import android.app.Activity;
 import android.os.Bundle;

@@ -1,4 +1,4 @@
-package com.example.rockpaperscissors;
+package com.android.rockpaperscissors;
 
 import android.content.Context;
 

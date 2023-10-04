@@ -1,4 +1,4 @@
-package com.example.rockpaperscissors;
+package com.android.rockpaperscissors;
 
 import android.content.Context;
 import android.content.Intent;
@@ -19,7 +19,7 @@ import java.util.Random;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
-    private final com.example.rockpaperscissors.MainThread thread;
+    private final com.android.rockpaperscissors.MainThread thread;
     private final int screenWidth, screenHeight, bottomWall, groupSize, speed, spriteSize;
     private final Bitmap rockImage, paperImage, scissorsImage;
     private final Paint paint;
@@ -29,9 +29,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public GameView(Context context,int groupSize, int speed) {
         super(context);
         getHolder().addCallback(this);
-        thread = new com.example.rockpaperscissors.MainThread(getHolder(), this);
+        thread = new com.android.rockpaperscissors.MainThread(getHolder(), this);
         setFocusable(true);
 
+        // what to do when back button is pressed
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
             public void handleOnBackPressed() {
@@ -42,7 +43,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             }
         };
 
-
         this.groupSize = groupSize;
         this.speed = speed;
         screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
@@ -51,6 +51,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         // Auto-sizing sprites based on groupSize. Not perfect but works OK.
         spriteSize = (int) Math.sqrt(((float)bottomWall*screenWidth)/(groupSize*3))/2;
 
+        // create and scale bitmaps for sprite images
         rockImage = Bitmap.createScaledBitmap(
                 BitmapFactory.decodeResource(getResources(), R.drawable.rock),
                 spriteSize, spriteSize, true);
@@ -72,7 +73,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(@NonNull SurfaceHolder surfaceHolder) {
-
+        // create sprites
         createSprites(groupSize, rockImage, 0, rocks, papers, scissors);
         createSprites(groupSize, paperImage, groupSize, papers, scissors, rocks);
         createSprites(groupSize, scissorsImage, 2*groupSize, scissors, rocks, papers);
@@ -82,8 +83,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     @Override
-    public void surfaceChanged(@NonNull SurfaceHolder surfaceHolder, int i, int i1, int i2) {
-    }
+    public void surfaceChanged(@NonNull SurfaceHolder surfaceHolder, int i, int i1, int i2) {}
 
     @Override
     public void surfaceDestroyed(@NonNull SurfaceHolder surfaceHolder) {
@@ -99,8 +99,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
-    private void createSprites(int amount, Bitmap image, int offset, Sprite[] ownGroup, Sprite[] hunterGroup, Sprite[] preyGroup) {
-        for (int i = 0; i < amount; i++) {
+    /**
+     * Create all sprites for a sprite group.
+     * @param groupSize     number of sprites in group.
+     * @param image         bitmap for sprite image.
+     * @param offset        offset in sprite group, to fill Sprite[].
+     * @param ownGroup      Sprite[] of the sprites.
+     * @param hunterGroup   Sprite[] for hunters.
+     * @param preyGroup     Sprite[] for prey.
+     */
+    private void createSprites(int groupSize, Bitmap image, int offset, Sprite[] ownGroup, Sprite[] hunterGroup, Sprite[] preyGroup) {
+        for (int i = 0; i < groupSize; i++) {
             Random random = new Random();
             int randomX = random.nextInt(screenWidth - spriteSize);
             int randomY = random.nextInt(bottomWall - spriteSize);
@@ -110,6 +119,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
+    /**
+     * Checks if a sprite group has won.
+     * Updates all sprites.
+     */
     public void updateSprites(){
         checkWinner();
         for(Sprite sprite: allSprites) {
@@ -117,6 +130,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
+    /**
+     * Counts all sprites in a group.
+     * @param group Group to be counted.
+     * @return      Returns int number of sprites in group.
+     */
     private int countSprites(Sprite[] group){
         int count = 0;
         for(Sprite sprite : group)
@@ -126,6 +144,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         return count;
     }
 
+    /**
+     * Checks if a sprite group has won.
+     * Uses countSprites() to count sprites in each group.
+     * If a group has all the sprites (groupSize * 3), it is the winner.
+     * In this case it stops the thread and goes to GameOver.java Activity.
+     */
     public void checkWinner(){
         Sprite[][] spriteGroups = new Sprite[][]{rocks, papers, scissors};
         for(Sprite[] group : spriteGroups){
@@ -145,6 +169,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
+    /**
+     * Draws score bars on the bottom of the canvas.
+     * They represent the number of sprites in each group.
+     * @param canvas    Canvas to draw the score bars on.
+     */
     private void drawScoreBars(Canvas canvas){
         float barResolution = (float) screenWidth/(groupSize*3);
         float rocksBar = barResolution * countSprites(rocks);
@@ -157,6 +186,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         canvas.drawRect(rocksBar+papersBar, bottomWall, screenWidth, screenHeight, paint);
     }
 
+    /**
+     * Draws all sprites on the canvas.
+     * @param canvas Canvas to draw the sprites on.
+     */
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);

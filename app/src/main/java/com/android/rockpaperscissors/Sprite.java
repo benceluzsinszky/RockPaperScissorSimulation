@@ -1,4 +1,4 @@
-package com.example.rockpaperscissors;
+package com.android.rockpaperscissors;
 
 import static java.lang.Math.abs;
 import android.content.res.Resources;
