@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="bg">#FFFDF2</color>
+    <color name="darkBlue">#2B393D</color>
+    <color name="buttonText">#C8DEE4</color>
+    <color name="rock">#A6D0DD</color>
+    <color name="paper">#FFD3B0</color>
+    <color name="scissors">#FF6969</color>
+</resources>
