@@ -105,7 +105,7 @@ public class Sprite {
      * Moves the sprite by performing random movement, hunting, and running behaviors.
      * This method should be called to update the sprite's position.
      */
-    public void moveSprite() {
+    private void moveSprite() {
         randomMovement();
         closestHunter = getInfo(hunterGroup);
         closestPrey = getInfo(preyGroup);
@@ -116,7 +116,7 @@ public class Sprite {
     /**
      * Generates random movement for the sprite within its speed range.
      */
-    public void randomMovement() {
+    private void randomMovement() {
         double randomX = ThreadLocalRandom.current().nextDouble(speed * -1, speed);
         double randomY = ThreadLocalRandom.current().nextDouble(speed * -1, speed);
         x += randomX;
@@ -129,7 +129,7 @@ public class Sprite {
      * @param group The group of sprites from which to find the closest sprite.
      * @return The closest sprite in the group, or null if the group is empty or null.
      */
-    public Sprite getInfo(Sprite[] group) {
+    private Sprite getInfo(Sprite[] group) {
         Sprite closestSprite = null;
         double closestDistance = Double.POSITIVE_INFINITY;
         for (Sprite sprite : group) {
@@ -147,10 +147,14 @@ public class Sprite {
         return closestSprite;
     }
 
+    private void predatorPreyBehavior(){
+        // TODO: make a single hunt-run method
+    }
+
     /**
-     * Moves the sprite towards the direction of its closest prey. TODO: make a single hunt-run method
+     * Moves the sprite towards the direction of its closest prey.
      */
-    public void hunt() {
+    private void hunt() {
         if (closestPrey != null) {
             double dX = (closestPrey.x + (size * 0.5) - x);
             double dY = (closestPrey.y + (size * 0.5) - y);
@@ -164,7 +168,7 @@ public class Sprite {
      * Makes the sprite to run away from its closest hunter if it exists and is within a certain distance.
      * The sprite tries to maintain a safe distance from the hunter.
      */
-    public void run() {
+    private void run() {
         if (closestHunter == null) {
             return;
         }
@@ -183,7 +187,7 @@ public class Sprite {
      * If the sprite touches the left, right, top, or bottom wall of the screen,
      * its position is adjusted accordingly.
      */
-    public void checkWalls() {
+    private void checkWalls() {
         // Check and adjust for the left wall
         if (x <= 20) {
             x = 20;
@@ -245,7 +249,7 @@ public class Sprite {
      * If the sprite collides with any other sprite in its own group, it adjusts its position
      * to prevent overlap and maintain separation.
      */
-    public void selfCollision() {
+    private void selfCollision() {
         for (Sprite sprite : ownGroup) {
             if (sprite == this || sprite == null) {
                 continue;
@@ -279,7 +283,7 @@ public class Sprite {
      * If a prey sprite is consumed, it is removed from the prey group, and the sprite taking the prey's place
      * becomes a part of the sprite's own group.
      */
-    public void eat() {
+    private void eat() {
         for (int i = 0; i < preyGroup.length; i++) {
             Sprite sprite = preyGroup[i];
             if (sprite == null) {
